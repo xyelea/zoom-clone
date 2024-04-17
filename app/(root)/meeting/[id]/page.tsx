@@ -16,14 +16,25 @@ const Meeting = ({ params: { id } }: { params: { id: string } }) => {
   const { call, isCallLoading } = useGetCallById(id);
 
   // Jika data pengguna atau panggilan belum dimuat, tampilkan indikator loading
-  if (!isLoaded || !isCallLoading) return <Loader />;
+  if (!isLoaded || isCallLoading) return <Loader />;
+
+  if (!call)
+    return (
+      <p className="text-center text-3xl font-bold text-white">
+        Call Not Found
+      </p>
+    );
 
   // Mengembalikan tampilan utama
   return (
     <main className="h-screen w-full">
       <StreamCall call={call}>
         <StreamTheme>
-          {!isSetUpComplete ? <MeetingSetup /> : <MeetingRoom />}
+          {!isSetUpComplete ? (
+            <MeetingSetup setIsSetUpComplete={setIsSetUpComplete} />
+          ) : (
+            <MeetingRoom />
+          )}
         </StreamTheme>
       </StreamCall>
     </main>

@@ -1,7 +1,70 @@
-import React from "react";
+"use client";
 
-const MeetingSetup = () => {
-  return <div>MeetingSetup</div>;
+import {
+  DeviceSettings,
+  VideoPreview,
+  useCall,
+} from "@stream-io/video-react-sdk";
+import React, { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+
+// Komponen MeetingSetup untuk menyiapkan pertemuan
+const MeetingSetup = ({
+  setIsSetUpComplete,
+}: {
+  setIsSetUpComplete: (value: boolean) => void;
+}) => {
+  const [isMicCamToggleOn, setIsMicCamToggleOn] = useState(false); // State untuk menandakan apakah mic dan kamera aktif
+
+  const call = useCall(); // Menggunakan hook useCall untuk mendapatkan panggilan
+
+  // Jika tidak ada panggilan, lemparkan error
+  if (!call) {
+    throw new Error(
+      "useStreamCall must be used within a StreamCall component."
+    );
+  }
+
+  // Mengubah status mic dan kamera berdasarkan toggle
+  useEffect(() => {
+    if (isMicCamToggleOn) {
+      call.camera.disable();
+      call.microphone.disable();
+    } else {
+      call.camera.enable();
+      call.microphone.enable();
+    }
+  }, [isMicCamToggleOn, call.camera, call.microphone]);
+  // Mengembalikan tampilan setup pertemuan
+  return (
+    <div className="flex h-screen w-full flex-col items-center justify-center gap-3 text-white">
+      <h1 className="text-2xl font-bold">Setup</h1> {/* Judul setup */}
+      <VideoPreview />
+      {/* Preview video */}
+      <div className="flex h-16 items-center justify-center gap-3">
+        {/* Toggle untuk mengaktifkan/menonaktifkan mic dan kamera */}
+        <label className="flex items-center justify-center gap-2 font-medium">
+          <input
+            type="checkbox"
+            checked={isMicCamToggleOn}
+            onChange={(e) => setIsMicCamToggleOn(e.target.checked)}
+          />
+          Join with mic and camera off
+        </label>
+        <DeviceSettings />
+        {/* Pengaturan perangkat */}
+      </div>
+      {/* Tombol untuk bergabung ke pertemuan */}
+      <Button
+        className="rounded-md bg-green-500 px-4 py-2.5"
+        onClick={() => {
+          call.join();
+          setIsSetUpComplete(true);
+        }}>
+        Join meeting
+      </Button>
+    </div>
+  );
 };
 
-export default MeetingSetup;
+export default MeetingSetup; // Ekspor komponen MeetingSetup untuk digunakan di file lain
