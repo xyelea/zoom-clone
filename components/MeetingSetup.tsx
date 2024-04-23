@@ -14,7 +14,7 @@ const MeetingSetup = ({
 }: {
   setIsSetUpComplete: (value: boolean) => void;
 }) => {
-  const [isMicCamToggleOn, setIsMicCamToggleOn] = useState(false); // State untuk menandakan apakah mic dan kamera aktif
+  const [isMicCamToggled, setIsMicCamToggled] = useState(false); // State untuk menandakan apakah mic dan kamera aktif
 
   const call = useCall(); // Menggunakan hook useCall untuk mendapatkan panggilan
 
@@ -27,14 +27,14 @@ const MeetingSetup = ({
 
   // Mengubah status mic dan kamera berdasarkan toggle
   useEffect(() => {
-    if (isMicCamToggleOn) {
+    if (isMicCamToggled) {
       call.camera.disable();
       call.microphone.disable();
     } else {
       call.camera.enable();
       call.microphone.enable();
     }
-  }, [isMicCamToggleOn, call.camera, call.microphone]);
+  }, [isMicCamToggled, call.camera, call.microphone]);
   // Mengembalikan tampilan setup pertemuan
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-3 text-white">
@@ -46,8 +46,8 @@ const MeetingSetup = ({
         <label className="flex items-center justify-center gap-2 font-medium">
           <input
             type="checkbox"
-            checked={isMicCamToggleOn}
-            onChange={(e) => setIsMicCamToggleOn(e.target.checked)}
+            checked={isMicCamToggled}
+            onChange={(e) => setIsMicCamToggled(e.target.checked)}
           />
           Join with mic and camera off
         </label>
